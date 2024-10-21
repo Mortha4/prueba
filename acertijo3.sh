@@ -50,22 +50,44 @@ if [ $# -eq 1 ];then
 				fi
 			done
 		done
+		
+
+		  #Guardar anios en lista
+ 
+                  lista_anios=()
+                  anio_1=$(obtener_anio 1)
+                  lista_de_anios+=("$anio_1")
+                  for((i=2;i<=$n;i++))do
+                          anio_encontrado=0
+                          for anio_lista in ${lista_de_anios[@]} ;do
+                                  if [ "$(obtener_anio $i)" -eq "$anio_lista" ];then
+                                          anio_encontrado=1
+                                  fi
+                          done
+  
+                          if [ "$anio_encontrado" -eq 0 ];then
+                                  anio_n=$(obtener_anio $i)
+                                  if [ "$anio_n" -ge 2019 ];then
+                                          lista_de_anios+=("$anio_n")
+                                  fi
+                          fi
+                  done
+	          >temp.txt
+ 
+                  #Mejores 3 tiempos de cada anio
+  
+                 for anio_lista in ${lista_de_anios[@]} ;do
+                          grep -m 3 -P  "${anio_lista}" infractores.txt >> temp.txt
+                 done
+ 
+                 cat temp.txt > infractores.txt
 
 	
 		#Mejores tiempos historicos
-
+		cat infractores.txt | sort -t',' -k3,3n > acertijo3.txt
 		
 		cat infractores.txt > aux.txt
 		
-		for ((i=1;i<=$n;i++))do
-			for ((j=$i;j<=$n;j++))do
-				if [ "$(obtener_tiempo $j aux.txt)" -lt "$(obtener_tiempo $i aux.txt)" ];then
-					swap $i $j aux.txt
-				fi
-			done
-		done
-		
-		grep -E -m 3 ".*$" aux.txt > acertijo3.txt 
 		
 		cat infractores.txt
 
